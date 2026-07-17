@@ -1,0 +1,35 @@
+services:
+  ros2:
+    build:
+      context: .
+      dockerfile: ros2.Dockerfile
+
+    image: ros2-jazzy:dev
+    container_name: ros2-jazzy
+
+    # Keep the container available for interactive terminals
+    stdin_open: true
+    tty: true
+
+    # Simplifies ROS 2 DDS discovery between the host and container
+    network_mode: host
+    ipc: host
+
+    environment:
+      DISPLAY: ${DISPLAY}
+      QT_X11_NO_MITSHM: "1"
+      ROS_DOMAIN_ID: ${ROS_DOMAIN_ID:-0}
+
+    volumes:
+      # X11 socket for RViz, rqt, Gazebo, etc.
+      - /tmp/.X11-unix:/tmp/.X11-unix:rw
+
+      - ./ros2_ws:/ros2_ws
+
+    # Hardware-accelerated OpenGL using the host's Intel/AMD graphics device
+    devices:
+      - /dev/dri:/dev/dri
+
+    working_dir: /ros2_ws
+
+    command: bash
