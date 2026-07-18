@@ -13,3 +13,32 @@ docker compose up -d --build
 ```
 
 If you use VSCode, you can also use the Remote - Containers extension to open the project in a containerized environment. Click the container icon in the left pane and search for the container. Right click to attach vscode to the container. This will allow you to work with the code and run ROS2 commands directly from within the container.
+
+
+To stop the container, you can use the following command:
+```bash
+docker compose down
+```
+
+# ROS2 Workspace
+
+In the ros2_ws directory, you will find the ROS2 workspace that contains the source code for the tutorials and exercises. The workspace directory is mounted as a volume in the Docker container, so any changes you make to the code will be reflected in the container.
+
+The workspace is structured as follows:
+
+```
+ros2_ws/
+├── src/          # Source code for ROS2 packages
+├── build/        # Build artifacts (generated after building the workspace)
+├── install/      # Installed packages (generated after building the workspace)
+```
+
+Inside the container, you can build the workspace using the following command:
+
+```bash
+cd ros2_ws
+colcon build # colcon is the build tool used in ROS2 to build packages
+
+# Don't forget to source the workspace to set up the environment
+source install/setup.bash
+``` 
