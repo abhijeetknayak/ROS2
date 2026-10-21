@@ -1,0 +1,11 @@
+# Goal: observation duration in seconds (1.0 to 15.0)
+float32 duration
+---
+# Result
+bool success
+uint32 frames_received
+string summary
+---
+# Feedback
+float32 elapsed
+uint32 frames_received
