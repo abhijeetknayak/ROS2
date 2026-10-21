@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 """Small, complete examples of a ROS message, service, and action."""
 
-import asyncio
 import math
 import time
 from typing import Optional
@@ -15,6 +14,9 @@ from rclpy.action import ActionServer, CancelResponse, GoalResponse
 from rclpy.node import Node
 from rclpy.qos import qos_profile_sensor_data
 from sensor_msgs.msg import Image
+from rclpy.executors import MultiThreadedExecutor
+from rclpy.callback_groups import MutuallyExclusiveCallbackGroup
+
 
 
 class IntroInterfaces(Node):
@@ -22,6 +24,16 @@ class IntroInterfaces(Node):
 
     def __init__(self) -> None:
         super().__init__('intro_interfaces')
+        self._camera_group = MutuallyExclusiveCallbackGroup()
+        self._action_group = MutuallyExclusiveCallbackGroup()
+
+        self._camera_sub = self.create_subscription(
+            Image,
+            '/camera/image_raw',
+            self._on_image,
+            qos_profile_sensor_data,
+            callback_group=self._camera_group,
+        )
 
         image_topic = self.declare_parameter(
             'image_topic', '/camera/image_raw').value
@@ -49,6 +61,7 @@ class IntroInterfaces(Node):
             execute_callback=self._observe_camera,
             goal_callback=self._goal_callback,
             cancel_callback=self._cancel_callback,
+            callback_group=self._action_group,
         )
 
         self.get_logger().info(
@@ -130,7 +143,8 @@ class IntroInterfaces(Node):
     def _cancel_callback(_goal_handle) -> CancelResponse:
         return CancelResponse.ACCEPT
 
-    async def _observe_camera(self, goal_handle) -> ObserveCamera.Result:
+
+    def _observe_camera(self, goal_handle) -> ObserveCamera.Result:
         duration = float(goal_handle.request.duration)
         start_time = time.monotonic()
         start_frames = self._camera_frames
@@ -141,6 +155,7 @@ class IntroInterfaces(Node):
 
             if goal_handle.is_cancel_requested:
                 goal_handle.canceled()
+
                 result = ObserveCamera.Result()
                 result.success = False
                 result.frames_received = observed
@@ -154,9 +169,11 @@ class IntroInterfaces(Node):
 
             if elapsed >= duration:
                 break
-            await asyncio.sleep(0.2)
+
+            time.sleep(0.2)
 
         goal_handle.succeed()
+
         result = ObserveCamera.Result()
         result.frames_received = self._camera_frames - start_frames
         result.success = result.frames_received > 0
@@ -164,21 +181,26 @@ class IntroInterfaces(Node):
             f'Received {result.frames_received} camera frames '
             f'in {duration:.1f} seconds.'
         )
+
         return result
+
 
     def destroy_node(self) -> bool:
         self._action_server.destroy()
         return super().destroy_node()
 
 
-def main(args=None) -> None:
+def main(args=None):
     rclpy.init(args=args)
     node = IntroInterfaces()
+
+    executor = MultiThreadedExecutor(num_threads=2)
+    executor.add_node(node)
+
     try:
-        rclpy.spin(node)
-    except KeyboardInterrupt:
-        pass
+        executor.spin()
     finally:
+        executor.shutdown()
         node.destroy_node()
         rclpy.shutdown()
 

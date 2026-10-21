@@ -1,9 +1,3 @@
-"""Small functions for the Week 1 guided programming task.
-
-These functions deliberately contain simple placeholders. They can be tested
-without starting ROS or Gazebo.
-"""
-
 import math
 
 
@@ -14,7 +8,7 @@ def image_megapixels(width: int, height: int) -> float:
     """
     # TODO(student): multiply width and height, then convert pixels to
     # megapixels. This should be a one-line calculation.
-    return 0.0
+    return (width * height) / 1e6
 
 
 def planar_speed(vx: float, vy: float) -> float:

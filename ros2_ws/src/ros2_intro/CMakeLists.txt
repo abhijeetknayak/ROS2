@@ -32,7 +32,6 @@ install(DIRECTORY
   launch
   config
   worlds
-  docs
   DESTINATION share/${PROJECT_NAME}
 )
 
