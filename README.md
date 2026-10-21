@@ -4,6 +4,8 @@ This repository contains ROS2 tutorials and exercises for learning and practicin
 
 We use ROS2 Jazzy as the ROS2 version for these tutorials. To make it easier for you to follow along, we have provided a Dockerfile that sets up a ROS2 Jazzy environment. You can build and run the Docker container to get started with the tutorials:
 
+If you don't have docker yet, install it from [here](https://docs.docker.com/desktop/)
+
 ```bash
 # Enable GUI support for the Docker container
 xhost +local:docker
