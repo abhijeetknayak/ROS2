@@ -1,4 +1,4 @@
-# inspection_robot_intro
+# ros2_intro
 
 A **single ROS 2 package** for the introduction week. It contains everything needed for the exercise:
 
@@ -14,9 +14,9 @@ A **single ROS 2 package** for the introduction week. It contains everything nee
 There are **no additional course ROS packages**. The generated interfaces use these type names:
 
 ```text
-inspection_robot_intro/msg/RobotSnapshot
-inspection_robot_intro/srv/GetRobotStatus
-inspection_robot_intro/action/ObserveCamera
+ros2_intro/msg/RobotSnapshot
+ros2_intro/srv/GetRobotStatus
+ros2_intro/action/ObserveCamera
 ```
 
 ## 1. Place the package in a workspace
@@ -24,9 +24,9 @@ inspection_robot_intro/action/ObserveCamera
 The downloaded folder itself is the ROS package. Put it inside the `src` directory of a workspace:
 
 ```bash
-mkdir -p ~/ros2_intro_ws/src
-cp -r inspection_robot_intro ~/ros2_intro_ws/src/
-cd ~/ros2_intro_ws
+mkdir -p ~/ros2_ws/src
+cp -r ros2_intro ~/ros2_ws/src/
+cd ~/ros2_ws
 ```
 
 Install missing dependencies, then build only this package:
@@ -34,7 +34,7 @@ Install missing dependencies, then build only this package:
 ```bash
 source /opt/ros/jazzy/setup.bash
 rosdep install --from-paths src --ignore-src -r -y
-colcon build --symlink-install --packages-select inspection_robot_intro
+colcon build --symlink-install --packages-select ros2_intro
 source install/setup.bash
 ```
 
@@ -42,13 +42,13 @@ Every new terminal must source both ROS 2 and the workspace:
 
 ```bash
 source /opt/ros/jazzy/setup.bash
-source ~/ros2_intro_ws/install/setup.bash
+source ~/ros2_ws/install/setup.bash
 ```
 
 ## 2. Launch the simulation
 
 ```bash
-ros2 launch inspection_robot_intro intro_sim.launch.py
+ros2 launch ros2_intro intro_sim.launch.py
 ```
 
 The launch file starts:
@@ -93,23 +93,23 @@ ros2 topic echo /camera/camera_info --once
 ros2 topic list -t
 ros2 topic echo /odom --once
 ros2 topic echo /robot_snapshot --once
-ros2 interface show inspection_robot_intro/msg/RobotSnapshot
+ros2 interface show ros2_intro/msg/RobotSnapshot
 ```
 
 ## 6. Call the service
 
 ```bash
-ros2 interface show inspection_robot_intro/srv/GetRobotStatus
+ros2 interface show ros2_intro/srv/GetRobotStatus
 ros2 service call /get_robot_status \
-  inspection_robot_intro/srv/GetRobotStatus "{}"
+  ros2_intro/srv/GetRobotStatus "{}"
 ```
 
 ## 7. Send an action goal
 
 ```bash
-ros2 interface show inspection_robot_intro/action/ObserveCamera
+ros2 interface show ros2_intro/action/ObserveCamera
 ros2 action send_goal /observe_camera \
-  inspection_robot_intro/action/ObserveCamera \
+  ros2_intro/action/ObserveCamera \
   "{duration: 5.0}" --feedback
 ```
 
@@ -136,19 +136,19 @@ ros2 bag play intro_bag
 Complete the three `TODO(student)` functions in:
 
 ```text
-inspection_robot_intro_nodes/student_helpers.py
+ros2_intro_nodes/student_helpers.py
 ```
 
 Run the tests from the workspace root:
 
 ```bash
-pytest -q src/inspection_robot_intro/test/test_student_helpers.py
+pytest -q src/ros2_intro/test/test_student_helpers.py
 ```
 
 After completing them, run:
 
 ```bash
-ros2 run inspection_robot_intro robot_observer
+ros2 run ros2_intro robot_observer
 ```
 
 The observer summarizes camera resolution/rate and robot position, heading, and speed.
@@ -156,12 +156,10 @@ The observer summarizes camera resolution/rate and robot position, heading, and 
 ## Package layout
 
 ```text
-inspection_robot_intro/
+ros2_intro/
 ├── action/ObserveCamera.action
 ├── config/bridge.yaml
-├── docs/sheet01_ros2_intro.tex
-├── docs/sheet01_ros2_intro.pdf
-├── inspection_robot_intro_nodes/
+├── ros2_intro_nodes/
 │   ├── intro_interfaces.py
 │   ├── robot_observer.py
 │   └── student_helpers.py
@@ -180,8 +178,8 @@ inspection_robot_intro/
 Rebuild and source the workspace:
 
 ```bash
-cd ~/ros2_intro_ws
-colcon build --symlink-install --packages-select inspection_robot_intro
+cd ~/ros2_ws
+colcon build --symlink-install --packages-select ros2_intro
 source install/setup.bash
 ```
 
@@ -211,7 +209,7 @@ Because the message, service, and action are generated during the build, rebuild
 Enable 3D acceleration. A software-rendering fallback can sometimes be started with:
 
 ```bash
-LIBGL_ALWAYS_SOFTWARE=1 ros2 launch inspection_robot_intro intro_sim.launch.py
+LIBGL_ALWAYS_SOFTWARE=1 ros2 launch ros2_intro intro_sim.launch.py
 ```
 
 ## Official references
