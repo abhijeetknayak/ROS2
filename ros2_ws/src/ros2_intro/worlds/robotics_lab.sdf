@@ -159,6 +159,33 @@
             <camera_info_topic>/camera/camera_info</camera_info_topic>
           </camera>
         </sensor>
+
+        <sensor name="lidar" type="gpu_lidar">
+          <pose>0.2 0 0.3 0 0 0</pose>
+
+          <topic>scan</topic>
+          <update_rate>10</update_rate>
+
+          <ray>
+            <scan>
+              <horizontal>
+                <samples>360</samples>
+                <resolution>1</resolution>
+                <min_angle>-3.14159</min_angle>
+                <max_angle>3.14159</max_angle>
+              </horizontal>
+            </scan>
+
+            <range>
+              <min>0.10</min>
+              <max>10.0</max>
+              <resolution>0.01</resolution>
+            </range>
+          </ray>
+
+          <always_on>true</always_on>
+          <visualize>true</visualize>
+        </sensor>
       </link>
 
       <joint name="left_wheel_joint" type="revolute">
